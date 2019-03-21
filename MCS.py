@@ -1,3 +1,10 @@
-'''
-write MCS player as a small exercise before you implement the MCTS
-'''
+import numpy as np
+
+class MonteCarloPlayer():
+   def __init__(self, game):
+      self.game = game
+
+   def play(self, board):
+      valids = self.game.getValidMoves(board, 1)
+      
+
