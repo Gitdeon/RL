@@ -12,7 +12,9 @@ from othello.OthelloGame import OthelloGame, display
 from othello.OthelloPlayers import *
 import numpy as np
 from utils import *
+import py_compile as cmp
 
+cmp.compile("othello/OthelloPlayers.py")
 """
 use this script to play any two agents against each other, or play manually with
 any agent.
@@ -21,7 +23,7 @@ g = OthelloGame(8)
 
 # all players
 rp = RandomPlayer(g).play
-hp = HumanOthelloPlayer(g).play
+rp2 = RandomPlayer(g).play
 
-arena_rp_hp = Arena.Arena(rp, hp, g, display=display)
-print(arena_rp_hp.playGames(2, verbose=True))
+arena_rp_rp2 = Arena.Arena(rp, rp2, g, display=display)
+print(arena_rp_rp2.playGame(verbose=True))
