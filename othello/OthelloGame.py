@@ -24,7 +24,7 @@ class OthelloGame(Game):
         return self.n*self.n + 1
 
     def getNextState(self, board, player, action):
-        # if player takes action on board, return next (board,player)
+        # if player takes action on board, return next (board, player)
         # action must be a valid move
         if action == self.n*self.n:
             return (board, -player)
@@ -72,7 +72,7 @@ class OthelloGame(Game):
 
         for i in range(1, 5):
             for j in [True, False]:
-                newB = np.rot90(board, i)
+                newB  = np.rot90(board, i)
                 newPi = np.rot90(pi_board, i)
                 if j:
                     newB = np.fliplr(newB)
@@ -91,22 +91,23 @@ class OthelloGame(Game):
 
 def display(board):
     n = board.shape[0]
-
+    
+    print("   ", end="")
     for y in range(n):
-        print (y,"|",end="")
+        print(y, " ", end="", sep="")
     print("")
-    print(" -----------------------")
+    print("   ----------------")
     for y in range(n):
-        print(y, "|",end="")    # print the row #
+        print(y, "|", end="")    # print the row #
         for x in range(n):
             piece = board[y][x]    # get the piece to print
-            if piece == -1: print("b ",end="")
-            elif piece == 1: print("W ",end="")
+            if piece == -1: print("b ", end="")
+            elif piece == 1: print("w ", end="")
             else:
                 if x==n:
-                    print("-",end="")
+                    print("-", end="")
                 else:
-                    print("- ",end="")
+                    print("- ", end="")
         print("|")
 
-    print("   -----------------------")
+    print("   ----------------")

@@ -1,29 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar 19 10:40:18 2019
-
-@author: Gideon
+@author: Gideon Hanse, Dyon van Vreumingen
 """
 
-import Arena
-#from MCTS import MCTS
-from othello.OthelloGame import OthelloGame, display
-from othello.OthelloPlayers import *
 import numpy as np
 from utils import *
 import py_compile as cmp
 
+from Arena import *
+from othello.OthelloGame import OthelloGame, display
+from othello.OthelloPlayers import *
+from MCS import MCSPlayer
+
 cmp.compile("othello/OthelloPlayers.py")
 """
-use this script to play any two agents against each other, or play manually with
+Use this script to play any two agents against each other, or play manually with
 any agent.
 """
 g = OthelloGame(8)
 
 # all players
-rp = RandomPlayer(g).play
-rp2 = RandomPlayer(g).play
+mcsp1 = MCSPlayer(g)
+mcsp1.train(1000)
 
-arena_rp_rp2 = Arena.Arena(rp, rp2, g, display=display)
-print(arena_rp_rp2.playGame(verbose=True))
+p2 = GreedyOthelloPlayer(g)
+
+arena_rp1_rp2 = Arena(mcsp1.play, p2.play, g, display=display)
+print(arena_rp1_rp2.playGame(verbose=True))
