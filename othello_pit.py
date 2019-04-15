@@ -19,14 +19,14 @@ cmp.compile("othello/OthelloPlayers.py")
 Use this script to play any two agents against each other, or play manually with
 any agent.
 """
-g = OthelloGame(8)
+g = OthelloGame(4)
 
 # All players
-mcsp1 = MCSPlayer(g, "othellopieces")
-mcsp1.train(100)
+mcsp1 = MCSPlayer(g, "gamewon")
+mcsp1.train(10000)
 
 # Save player so we can reuse it without training
-pc.dump(mcsp1, open("mcs_othello.rlp", "w"))
+# pc.dump(mcsp1, open("mcs_othello.rlp", "w"))
 
 # p2 = GreedyOthelloPlayer(g)
 p2 = RandomPlayer(g)

@@ -83,11 +83,14 @@ class OthelloGame(Game):
 	def stringRepresentation(self, board):
 		# 8x8 numpy array (canonical board)
 		# return board.tostring()
+		d = {"1": "O", "-1": "X", "0": "."}
 		string = ""
 		for i in range(self.n):
 			for j in range(self.n):
-				string = string + str(board[i][j])
+				string = string + d[str(board[i][j])]
 			string = string + "\n"
+		
+		return string
 		
 		return string
 
