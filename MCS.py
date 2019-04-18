@@ -3,38 +3,15 @@
 """
 
 import numpy as np
-import pprint
-
-from othello.OthelloGame import display
-
-pp = pprint.PrettyPrinter(indent=4)
-
-class GreedyOthelloPlayer():
-	def __init__(self, game):
-		self.game = game
-
-	def play(self, board):
-		valids = self.game.getValidMoves(board, 1)
-		candidates = []
-		for a in range(self.game.getActionSize()):
-			if valids[a]==0:
-				continue
-			nextBoard, _ = self.game.getNextState(board, 1, a)
-			score = self.game.getScore(nextBoard, 1)
-			candidates += [(-score, a)]
-		candidates.sort()
-		return candidates[0][1]
 
 class MCSPlayer():
-	def __init__(self, game, reward_mode, two_policies=True):
+	def __init__(self, game, reward_mode="gamewon"):
 		self.game = game
 		self.reward_mode = reward_mode
 		
 		self.Q  = {} # Action-value dict
-		self.R  = {} # Returns dict
 		self.pi = {} # Policy
-		self.epsilon = 0.6
-		self.two_policies = two_policies
+		self.epsilon = 1
 	
 	def generate_episode_iterative(self):
 		episode = []
@@ -62,11 +39,9 @@ class MCSPlayer():
 	def train(self, n_episodes=1):
 		for e in range(n_episodes):
 			if e%100 == 0: print("Training... episode {}      ".format(e))
-			# print("Episode {}".format(e))
 			
 			# Dynamic epsilon
-			self.epsilon = np.exp(-0.0005*e)*0.8
-			# self.epsilon = np.exp(-0.05*e)
+			self.epsilon = np.exp(-0.0005*e)
 			
 			episode, rewards = self.generate_episode_iterative()
 			
@@ -89,15 +64,9 @@ class MCSPlayer():
 				self.Q[s][0][a] += 1/self.Q[s][1][a]*(r_sa-self.Q[s][0][a])
 				
 				# Update pi
-				Q_s = self.Q[s]
-				a_best = np.argmax(Q_s[0]) # Pick action with highest return
+				a_best = np.argmax(self.Q[s][0]) # Pick action with highest return
 				self.pi[s] = self.epsilon*valids/len(valids[valids==1])
 				self.pi[s][a_best] += 1-self.epsilon
-				# if a_best == len(valids)-1:
-					# print("\nGepast")
-				# print(b*cp)
-				# print(cp)
-				# print(Q_s[0])
 	
 	def play(self, board):
 		s = self.game.stringRepresentation(board)
@@ -110,11 +79,6 @@ class MCSPlayer():
 		
 		probs = self.pi[s]
 		action = np.random.choice(range(len(valids)), size=1, p=probs)[0]
-		if not(valids[action]==1):
-			# print(board)
-			# print(action)
-			# pp.pprint(self.pi[s])
-			raise ValueError("Valsgespeeld!")
 		
 		return action
 		

@@ -22,7 +22,7 @@ any agent.
 g = OthelloGame(4)
 
 # All players
-mcsp1 = MCSPlayer(g, "gamewon")
+mcsp1 = MCSPlayer(g, "othellopieces")
 mcsp1.train(10000)
 
 # Save player so we can reuse it without training

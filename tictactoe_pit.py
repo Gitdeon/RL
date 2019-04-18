@@ -23,7 +23,7 @@ g = TicTacToeGame()
 
 # All players
 mcsp1 = MCSPlayer(g, "gamewon")
-mcsp1.train(10000)
+mcsp1.train(100000)
 # mcsp1 = RandomPlayer(g)
 
 # Save player so we can reuse it without training
