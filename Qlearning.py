@@ -14,30 +14,14 @@ class QlearningPlayer():
 		
 		self.Q  = {} # Action-value dict
 		self.pi = {} # Policy
-		self.alpha = 1
-		self.gamma = 1
+		self.alpha = 0.1
+		self.gamma = 0.9
 		self.epsilon = 1
+		self.omega = 0.6 # See Even-Dar and Mansour, "Learning rates for Q-learning", 2003
 	
 	def generate_episode_iterative(self):
 		episode = []
 		rewards = []
-		plays = [self.play, None, self.play]
-		curPlayer = 1
-		board = self.game.getInitBoard()
-		
-		while self.game.getGameEnded(board, curPlayer) == 0:
-			action = plays[curPlayer+1](curPlayer*board)
-			newBoard, newCurPlayer = self.game.getNextState(board, curPlayer, action)
-			if self.reward_mode == "othellopieces":
-				score = self.game.getScore(board, 1)
-				newScore = self.game.getScore(newBoard, 1)
-				reward = newScore-score
-			elif self.reward_mode == "gamewon":
-				reward = self.game.getGameEnded(newBoard, 1)
-			episode.append((curPlayer*board, action, curPlayer))
-			rewards.append(reward)
-			board = newBoard
-			curPlayer = newCurPlayer
 		
 		return episode, rewards
 	
@@ -45,33 +29,55 @@ class QlearningPlayer():
 		for e in range(n_episodes):
 			if e%100 == 0: print("Training... episode {}      ".format(e))
 			
-			# Dynamic epsilon
-			self.epsilon = np.exp(-0.0005*e)
+			# Dynamic alpha, epsilon
+			# self.alpha = 1/(e+1)**self.omega
+			self.epsilon = np.exp(-0.0003*e)
 			
-			episode, rewards = self.generate_episode_iterative()
-			
-			for i in range(len(episode)):
-				'''Note: the nature of these games disallows the occurence of the same
-				state more than once per episode. Hence we can directly update pi
-				after updating Q'''
-				b, a, cp = episode[i]
-				valids = self.game.getValidMoves(b, 1)
-				s = self.game.stringRepresentation(b)
+			# Work way down the episode
+			curPlayer = 1
+			board = self.game.getInitBoard()			
+			while self.game.getGameEnded(board, curPlayer) == 0:
+				a = self.play(curPlayer*board)
+				newBoard, newCurPlayer = self.game.getNextState(board, curPlayer, a)
+				if self.reward_mode == "scorediff":
+					score = self.game.getScore(board, 1)
+					newScore = self.game.getScore(newBoard, 1)
+					reward = newScore-score
+				elif self.reward_mode == "gamewon":
+					reward = self.game.getGameEnded(newBoard, 1)
+				
+				valids = self.game.getValidMoves(curPlayer*board, 1)
+				s = self.game.stringRepresentation(curPlayer*board)
+				
+				# Let the opponent play to create s' (denoted s_)
+				newA = self.play_random(-curPlayer*newBoard)
+				newNewBoard, _ = self.game.getNextState(newBoard, -curPlayer, newA)
+				newNewValids = self.game.getValidMoves(curPlayer*newNewBoard, 1)
+				s_ = self.game.stringRepresentation(curPlayer*newNewBoard)
 				
 				# Update Q
-				r_sa = sum(rewards[i:])*cp
+				r_sa = curPlayer*reward
 				if s not in self.Q:
-					self.Q[s] = [np.zeros(len(valids)), np.zeros(len(valids))]
-					# Assign large negative value to invalid actions
-					self.Q[s][0] -= 100*np.logical_not(valids)
+					self.Q[s] = np.zeros(len(valids))
+					self.Q[s] -= 100*np.logical_not(valids)
+				if s_ not in self.Q:
+					self.Q[s_] = np.zeros(len(valids))
+					self.Q[s_] -= 100*np.logical_not(newNewValids)
 				
-				self.Q[s][1][a] += 1 # Number of times (s, a) has been encountered
-				self.Q[s][0][a] += 1/self.Q[s][1][a]*(r_sa-self.Q[s][0][a])
+				self.Q[s][a] += self.alpha*(r_sa+self.gamma*np.max(self.Q[s_])-self.Q[s][a])
+				
+				# print(r_sa)
+				# print("s=\n{}".format(s))
+				# print("Q[s]={}\n\n".format(self.Q[s]))
+				# wait = input()
 				
 				# Update pi
-				a_best = np.argmax(self.Q[s][0]) # Pick action with highest return
+				a_best = np.argmax(self.Q[s]) # Pick action with highest return
 				self.pi[s] = self.epsilon*valids/len(valids[valids==1])
 				self.pi[s][a_best] += 1-self.epsilon
+				
+				board = newBoard
+				curPlayer = newCurPlayer
 	
 	def play(self, board):
 		s = self.game.stringRepresentation(board)
@@ -83,6 +89,14 @@ class QlearningPlayer():
 			self.pi[s] = probs
 		
 		probs = self.pi[s]
+		action = np.random.choice(range(len(valids)), size=1, p=probs)[0]
+		
+		return action
+	
+	def play_random(self, board):
+		valids = self.game.getValidMoves(board, 1)
+		probs = valids/len(valids[valids==1])
+		
 		action = np.random.choice(range(len(valids)), size=1, p=probs)[0]
 		
 		return action

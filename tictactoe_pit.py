@@ -13,6 +13,7 @@ from Arena import *
 from tictactoe.TicTacToeGame import TicTacToeGame, display
 from tictactoe.TicTacToePlayers import *
 from MCS import MCSPlayer
+from Qlearning import QlearningPlayer
 
 cmp.compile("tictactoe/TicTacToePlayers.py")
 """
@@ -22,15 +23,16 @@ any agent.
 g = TicTacToeGame()
 
 # All players
-mcsp1 = MCSPlayer(g, "gamewon")
-mcsp1.train(100000)
-# mcsp1 = RandomPlayer(g)
+# p1 = RandomPlayer(g)
+p1 = MCSPlayer(g, "gamewon")
+# p1 = QlearningPlayer(g, "gamewon")
+p1.train(10000)
 
 # Save player so we can reuse it without training
-# pc.dump(mcsp1, open("mcs_tictactoe.rlp", "w"))
+# pc.dump(p1, open("mcs_tictactoe.rlp", "w"))
 
 p2 = RandomPlayer(g)
 
-arena_rp1_rp2 = Arena(mcsp1.play, p2.play, g, display=display)
+arena_rp1_rp2 = Arena(p1.play, p2.play, g, display=display)
 # print(arena_rp1_rp2.playGame(verbose=True))
 print(arena_rp1_rp2.playGames(1000, verbose=False))

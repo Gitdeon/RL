@@ -16,14 +16,13 @@ class MCSPlayer():
 	def generate_episode_iterative(self):
 		episode = []
 		rewards = []
-		plays = [self.play, None, self.play]
 		curPlayer = 1
 		board = self.game.getInitBoard()
 		
 		while self.game.getGameEnded(board, curPlayer) == 0:
-			action = plays[curPlayer+1](curPlayer*board)
+			action = self.play(curPlayer*board)
 			newBoard, newCurPlayer = self.game.getNextState(board, curPlayer, action)
-			if self.reward_mode == "othellopieces":
+			if self.reward_mode == "scorediff": # Will raise error if game has no scoring
 				score = self.game.getScore(board, 1)
 				newScore = self.game.getScore(newBoard, 1)
 				reward = newScore-score
