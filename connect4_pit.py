@@ -1,27 +1,33 @@
-import Arena
-#from MCTS import MCTS
-from connect4.Connect4Game import Connect4Game, display
-from connect4.Connect4Players import *
+"""
+Use this script to pit any two agents against each other, or play manually with
+any agent.
+
+Author: Gideon Hanse, Dyon van Vreumingen
+"""
+
 import numpy as np
+import py_compile as cmp
 from utils import *
 
-"""
-use this script to play any two agents against each other, or play manually with
-any agent.
-"""
+from Arena import *
+from connect4.Connect4Game import Connect4Game, display
+from connect4.Connect4Players import *
+
+from MCS import MCSPlayer
+from Qlearning import QlearningPlayer
+#from MCTS import MCTSPlayer
+
+cmp.compile("connect4/Connect4Players.py")
+
 g = Connect4Game(6)
 
-# all players
-rp = RandomPlayer(g).play
-#gp = GreedyOthelloPlayer(g).play
-hp = HumanConnect4Player(g).play
+# p1 = MCSPlayer(g)
+p1 = QlearningPlayer(g)
+p1.train(60000)
 
-op=OneStepLookaheadConnect4Player(g).play
+p2 = RandomPlayer(g)
+# p2 = OneStepLookaheadConnect4Player(g)
 
-arena_rp_op = Arena.Arena(rp, op, g, display=display)
-print(arena_rp_op.playGames(2, verbose=True))
-
-#arena_rp_hp = Arena.Arena(rp, hp, g, display=display)
-#print(arena_rp_hp.playGames(2, verbose=True))
-
-
+print("Connect 4")
+arena = Arena(p1.play, p2.play, g, display=display)
+print(arena.playGames(1000, verbose=False))

@@ -5,13 +5,13 @@
 import numpy as np
 
 class MCSPlayer():
-	def __init__(self, game, reward_mode="gamewon"):
+	def __init__(self, game):
 		self.game = game
-		self.reward_mode = reward_mode
 		
 		self.Q  = {} # Action-value dict
 		self.pi = {} # Policy
 		self.epsilon = 1
+		self.mu = 6 # Controls the decrease rate of epsilon
 	
 	def generate_episode_iterative(self):
 		episode = []
@@ -22,12 +22,7 @@ class MCSPlayer():
 		while self.game.getGameEnded(board, curPlayer) == 0:
 			action = self.play(curPlayer*board)
 			newBoard, newCurPlayer = self.game.getNextState(board, curPlayer, action)
-			if self.reward_mode == "scorediff": # Will raise error if game has no scoring
-				score = self.game.getScore(board, 1)
-				newScore = self.game.getScore(newBoard, 1)
-				reward = newScore-score
-			elif self.reward_mode == "gamewon":
-				reward = self.game.getGameEnded(newBoard, 1)
+			reward = self.game.getGameEnded(newBoard, 1)
 			episode.append((curPlayer*board, action, curPlayer))
 			rewards.append(reward)
 			board = newBoard
@@ -35,12 +30,12 @@ class MCSPlayer():
 		
 		return episode, rewards
 	
-	def train(self, n_episodes=1):
-		for e in range(n_episodes):
+	def train(self, n=1): # n is the number of training episodes
+		for e in range(n):
 			if e%100 == 0: print("Training... episode {}      ".format(e))
 			
 			# Dynamic epsilon
-			self.epsilon = np.exp(-0.0005*e)
+			self.epsilon = np.exp(-self.mu*e/n)*0.95+0.05
 			
 			episode, rewards = self.generate_episode_iterative()
 			
@@ -66,6 +61,7 @@ class MCSPlayer():
 				a_best = np.argmax(self.Q[s][0]) # Pick action with highest return
 				self.pi[s] = self.epsilon*valids/len(valids[valids==1])
 				self.pi[s][a_best] += 1-self.epsilon
+		print("MCS klaar")
 	
 	def play(self, board):
 		s = self.game.stringRepresentation(board)

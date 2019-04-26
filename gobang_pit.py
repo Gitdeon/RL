@@ -1,27 +1,33 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Tue Mar 19 10:40:18 2019
+Use this script to pit any two agents against each other, or play manually with
+any agent.
 
-@author: Gideon
+Author: Gideon Hanse, Dyon van Vreumingen
 """
 
-import Arena
-#from MCTS import MCTS
-from gobang.GobangGame import GobangGame, display
-from gobang.GobangPlayers import *
 import numpy as np
+import py_compile as cmp
 from utils import *
 
-"""
-use this script to play any two agents against each other, or play manually with
-any agent.
-"""
+from Arena import *
+from gobang.GobangGame import GobangGame, display
+from gobang.GobangPlayers import *
+
+from MCS import MCSPlayer
+from Qlearning import QlearningPlayer
+#from MCTS import MCTSPlayer
+
+cmp.compile("gobang/GobangPlayers.py")
+
 g = GobangGame(9)
 
-# all players
-rp = RandomPlayer(g).play
-hp = HumanGobangPlayer(g).play
+# p1 = MCSPlayer(g)
+p1 = QlearningPlayer(g)
+p1.train(10000)
 
-arena_rp_hp = Arena.Arena(rp, hp, g, display=display)
-print(arena_rp_hp.playGames(2, verbose=True))
+p2 = RandomPlayer(g)
+
+
+print("Gobang")
+arena = Arena(p1.play, p2.play, g, display=display)
+print(arena.playGames(1000, verbose=False))

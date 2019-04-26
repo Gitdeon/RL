@@ -5,15 +5,15 @@
 import numpy as np
 
 class QlearningPlayer():
-	def __init__(self, game):
+	def __init__(self, game, reward_mode="gamewon"):
 		self.game = game
+		self.reward_mode = reward_mode
 		
 		self.Q  = {} # Action-value dict
 		self.pi = {} # Policy
 		self.alpha = 0.2
 		self.gamma = 0.9
 		self.epsilon = 1
-		self.mu = 6 # Controls the decrease rate of epsilon
 	
 	def generate_episode_iterative(self):
 		episode = []
@@ -21,45 +21,41 @@ class QlearningPlayer():
 		
 		return episode, rewards
 	
-	def train(self, n=1): # n is the number of training episodes
-		for e in range(n):
+	def train(self, n_episodes=1):
+		for e in range(n_episodes):
 			if e%100 == 0: print("Training... episode {}      ".format(e))
 			
 			# Dynamic epsilon
-			self.epsilon = np.exp(-self.mu*e/n)*0.95+0.05
+			self.epsilon = np.exp(-0.0010*e)*0.95+0.05
 			
 			# Work way down the episode
 			curPlayer = 1
 			board = self.game.getInitBoard()			
 			while self.game.getGameEnded(board, curPlayer) == 0:
-				moveEndsGame = False
 				a = self.play(curPlayer*board)
 				newBoard, newCurPlayer = self.game.getNextState(board, curPlayer, a)				
 				valids = self.game.getValidMoves(curPlayer*board, 1)
 				s = self.game.stringRepresentation(curPlayer*board)
-				reward = self.game.getGameEnded(newBoard, 1)
-				if s not in self.Q:
-					self.Q[s]  = np.zeros(len(valids))
-					self.Q[s] -= 100*np.logical_not(valids)
 				
-				# If this move ends the game, grant reward and end episode; s' will not be defined
-				if reward != 0: moveEndsGame = True
+				# Let a fixed-policy (random) opponent play to create s' (denoted s_)
+				newA = self.play_random(-curPlayer*newBoard)
+				newNewBoard, _ = self.game.getNextState(newBoard, -curPlayer, newA)
+				newNewValids = self.game.getValidMoves(curPlayer*newNewBoard, 1)
+				s_ = self.game.stringRepresentation(curPlayer*newNewBoard)
 				
-				# If not, let a fixed-policy (random) opponent play to create s' (denoted s_)
-				if not moveEndsGame:
-					newA = self.play_random(-curPlayer*newBoard)
-					newNewBoard, _ = self.game.getNextState(newBoard, -curPlayer, newA)
-					newNewValids = self.game.getValidMoves(curPlayer*newNewBoard, 1)
-					s_ = self.game.stringRepresentation(curPlayer*newNewBoard)
-					reward = self.game.getGameEnded(newNewBoard, 1)
-					if s_ not in self.Q:
-						self.Q[s_]  = np.zeros(len(newNewValids))
-						self.Q[s_] -= 100*np.logical_not(newNewValids)
+				
+				reward = self.game.getGameEnded(newNewBoard, 1)
 				
 				# Update Q
-				r_sa = curPlayer*reward				
-				maxQs_ = 0 if moveEndsGame else np.max(self.Q[s_])
-				self.Q[s][a] += self.alpha*(r_sa+self.gamma*maxQs_-self.Q[s][a])
+				r_sa = curPlayer*reward
+				if s not in self.Q:
+					self.Q[s ]  = np.zeros(len(valids))
+					self.Q[s ] -= 100*np.logical_not(valids)
+				if s_ not in self.Q:
+					self.Q[s_]  = np.zeros(len(newNewValids))
+					self.Q[s_] -= 100*np.logical_not(newNewValids)
+				
+				self.Q[s][a] += self.alpha*(r_sa+self.gamma*np.max(self.Q[s_])-self.Q[s][a])
 				
 				# Update pi
 				a_best = np.argmax(self.Q[s]) # Pick action with highest return
