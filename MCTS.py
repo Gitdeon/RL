@@ -1,7 +1,6 @@
-
-
 import numpy as np
 import math
+
 
 class MCTSPlayer():
 
@@ -24,10 +23,7 @@ class MCTSPlayer():
         
         #reorder the following block
         state = self.game.stringRepresentation(canonicalBoard)
-        for action in range(self.game.getActionSize()):
-            if (state, action) in self.sa_visits:
-                counts = self.sa_visits[(state, action)]
-            else: counts = 0
+        counts = [self.sa_visits[(state,action)] if (state,action) in self.sa_visits else 0 for action in range(self.game.getActionSize())]
         
         if temp == 0:
             bestaction = np.argmax(counts)
@@ -44,7 +40,7 @@ class MCTSPlayer():
         
         state = self.game.stringRepresentation(canonicalBoard)
         
-        if state not in self.s_status: #add status of state if not added yet
+        if state not in self.s_status: #add state outcome if not added yet
             self.s_status[state] = self.game.getGameEnded(canonicalBoard, 1)
         
         if self.s_status[state] != 0: #if node is terminal node
@@ -52,21 +48,20 @@ class MCTSPlayer():
 
         if state not in self.pi:
             validmoves = self.game.getValidMoves(canonicalBoard, 1)
-            
-            #Come up with actual rollout scheme for next line:
-            self.pi[state], value = np.random.uniform(-1,1,len(validmoves)), np.random.uniform(-1,1,1)
-            
-            self.pi[state] = self.pi[state] * validmoves   #mask invalid moves
+            self.pi[state] = np.random.uniform(-1,1,len(validmoves))
+            value = np.random.uniform(-1,1,1)
+            self.pi[state] = self.pi[state] * validmoves   #masking invalid moves?
             state_policy_sum = np.sum(self.pi[state])
 
             if state_policy_sum > 0:
-                self.pi[state] = elf.pi[state] / state_policy_sum #normalize
+                self.pi[state] /= state_policy_sum #normalize
             else:
+                #All moves are masked, workaround:
                 self.pi[state] = self.pi[state] + validmoves
-                self.pi[state] = self.pi[state] / np.sum(self.pi[state])
+                self.pi[state] /= np.sum(self.pi[state])
             
             self.s_moves[state] = validmoves
-            self.s_boardvisits[state] = 0
+            self.s_boardvisits[state] =0
             return -value
 
         validmoves = self.s_moves[state]
