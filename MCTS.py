@@ -24,7 +24,10 @@ class MCTSPlayer():
         
         #reorder the following block
         state = self.game.stringRepresentation(canonicalBoard)
-        counts = [self.sa_visits[(state,action)] if (state,action) in self.sa_visits else 0 for action in range(self.game.getActionSize())]
+        for action in range(self.game.getActionSize()):
+            if (state, action) in self.sa_visits:
+                counts = self.sa_visits[(state, action)]
+            else: counts = 0
         
         if temp == 0:
             bestaction = np.argmax(counts)

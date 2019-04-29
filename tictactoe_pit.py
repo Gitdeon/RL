@@ -27,7 +27,6 @@ p1.train(10000)
 
 p2 = RandomPlayer(g)
 
-
 print("Tic tac toe")
 arena = Arena(p1.play, p2.play, g, display=display)
 print(arena.playGames(1000, verbose=False))
