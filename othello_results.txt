@@ -1,0 +1,81 @@
+Othello:
+
+ALGORITHM CONVERGENCE COMPARISONS ON 4x4 board: (epsilon, uct explr param = 1)
+
+MCS vs. random (MCS begins):
+training iterations, % wins, % losses, $draws, std dev wins/losses
+500, 72.2, 27.8, 0, 5.63
+5000, 88, 12, 0, 2.45
+10000, 90.4, 9.6, 0, 4.8
+
+MCS vs. greedy (MCS begins):
+training iterations, % wins, % losses, $draws, std dev wins/losses
+500, 84.6, 15.4, 0, 9.76
+5000, 92.8, 7.2, 0, 3.31
+10000, 93.8, 6.3, 0, 5.15
+
+
+
+MCTS vs random (MCTS begins):
+
+iterations, % wins, % losses, draws, std dev wins/losses
+10, 68.4, 35.2, 0, 7.82
+100, 85.2, 14.8, 0, 3.76
+200, 88.4, 11.6, 0, 5.2
+
+MCTS vs. greedy (MCTS begins):
+
+iterations, % wins, % losses, draws
+10, 79.6, 20.4, 0, 8,22
+100, 92.1, 7.9, 0, 4.87
+200, 98, 2, 0, 1.32
+
+
+
+Qlearning vs. random (Qlearning begins):
+training iterations, % wins, % losses, draws, stddev wins/losses
+500, 62.8, 37.2, 0, 8.13
+5000, 88.4, 11.6, 0, 3.611
+10000, 89.0, 11.0, 0, 4.049691346263317 
+
+Qlearning vs. greedy (Qlearning begins):
+500, 96.4, 3.6, 0, 1.0198
+5000, 91.8, 8.2, 0, 3.31
+10000, 92, 8, 0, 2.7568
+
+
+
+
+
+MCS BOARD SIZE SCALABILITY (5000 iterations): (all vs. greedy)
+board size, % wins, % losses, draws, stddev wins/losses
+4x4, 92.8, 7.2, 0, 3.31
+6x6, 
+8x8, 
+
+MCTS BOARD SIZE SCALABILITY (100 iterations): (all vs. greedy)
+board size, % wins, % losses, draws, stddev wins/losses
+4x4, 92.1, 7.9, 0, 4.87
+6x6, 
+8x8,
+
+QLearner BOARD SIZE SCALABILITY (5000 iterations): (all vs. greedy)
+board size, % wins, % losses, draws, stddev wins/losses
+4x4, 91.8, 8.2, 0, 3.31
+6x6,
+8x8, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

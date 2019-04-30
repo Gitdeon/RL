@@ -24,19 +24,19 @@ totalp1wins, totalp2wins, totaldraws = [], [], []
 #using random seeds 8-18
 for i in range(8,18):
     np.random.seed(i)
+    
     #p1 = MCSPlayer(g)
-
-    #p1 = QlearningPlayer(g)
-    #p1.train(10000)
-
-    mcts_arguments = dotdict({'MCTSiterations': 200, 'exploration_param': 1.0})
-    mcts = MCTSPlayer(g, mcts_arguments)
-    p1 = lambda x: np.argmax(mcts.getActionProb(x, temp=0))
+    p1 = QlearningPlayer(g)
+    p1.train(500)
+    
+    #mcts_arguments = dotdict({'MCTSiterations': 200, 'exploration_param': 1.0})
+    #mcts = MCTSPlayer(g, mcts_arguments)
+    #p1 = lambda x: np.argmax(mcts.getProbability(x, temp=0))
     
     p2 = GreedyOthelloPlayer(g)
     #p2 = RandomPlayer(g)
     
-    arena = Arena(p2.play, p1, g, display=display)
+    arena = Arena(p1.play, p2.play, g, display=display)
     p1wins, p2wins, draws = arena.playGames(100, verbose=False)
     totalp1wins.append(p1wins)
     totalp2wins.append(p2wins)

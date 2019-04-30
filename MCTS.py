@@ -15,13 +15,12 @@ class MCTSPlayer():
         self.s_boardvisits = {}   # amount of visits for board state dict
         self.s_moves = {}         # possible moves for board state dict
     
-
-    def getActionProb(self, canonicalBoard, temp=1):
+    
+    def getProbability(self, canonicalBoard, temp=1):
 
         for i in range(self.args.MCTSiterations):
             self.iteration(canonicalBoard)
         
-        #reorder the following block
         state = self.game.stringRepresentation(canonicalBoard)
         counts = [self.sa_visits[(state,action)] if (state,action) in self.sa_visits else 0 for action in range(self.game.getActionSize())]
         
