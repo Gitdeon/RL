@@ -49,7 +49,7 @@ class MCTSPlayer():
             validmoves = self.game.getValidMoves(canonicalBoard, 1)
             self.pi[state] = np.random.uniform(-1,1,len(validmoves))
             value = np.random.uniform(-1,1,1)
-            self.pi[state] = self.pi[state] * validmoves   #masking invalid moves?
+            self.pi[state] = self.pi[state] * validmoves
             state_policy_sum = np.sum(self.pi[state])
 
             if state_policy_sum > 0:
@@ -60,7 +60,7 @@ class MCTSPlayer():
                 self.pi[state] /= np.sum(self.pi[state])
             
             self.s_moves[state] = validmoves
-            self.s_boardvisits[state] =0
+            self.s_boardvisits[state] = 0
             return -value
 
         validmoves = self.s_moves[state]

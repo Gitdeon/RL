@@ -50,25 +50,29 @@ Qlearning vs. greedy (Qlearning begins):
 MCS BOARD SIZE SCALABILITY (5000 iterations): (all vs. greedy)
 board size, % wins, % losses, draws, stddev wins/losses
 4x4, 92.8, 7.2, 0, 3.31
-6x6, 
-8x8, 
+6x6, 49.2, 50.8, 0, 10.49
+8x8, 41.0, 59.0, 0, 4.2426
 
 MCTS BOARD SIZE SCALABILITY (100 iterations): (all vs. greedy)
 board size, % wins, % losses, draws, stddev wins/losses
 4x4, 92.1, 7.9, 0, 4.87
-6x6, 
-8x8,
+6x6, 64, 38, 0, 9.6332
+8x8, 58.4, 41.6, 0, 3.1369
 
 QLearner BOARD SIZE SCALABILITY (5000 iterations): (all vs. greedy)
 board size, % wins, % losses, draws, stddev wins/losses
 4x4, 91.8, 8.2, 0, 3.31
-6x6,
+6x6, 48.4, 51.6, 0, 2.87
 8x8, 
 
 
 
 
-
+MCTS uct exploration parameter c experiments:
+c, % wins, % losses, draws, stddev wins/losses
+0.1, 86, 14, 0, 14.1421
+1, 92.1, 7.9, 0, 4.87
+2, 67.8, 32.2, 0, 38.47
 
 
 

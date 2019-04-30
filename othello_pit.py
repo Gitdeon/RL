@@ -27,9 +27,9 @@ for i in range(8,18):
     
     #p1 = MCSPlayer(g)
     p1 = QlearningPlayer(g)
-    p1.train(500)
+    p1.train(5000)
     
-    #mcts_arguments = dotdict({'MCTSiterations': 200, 'exploration_param': 1.0})
+    #mcts_arguments = dotdict({'MCTSiterations': 100, 'exploration_param': 1.0})
     #mcts = MCTSPlayer(g, mcts_arguments)
     #p1 = lambda x: np.argmax(mcts.getProbability(x, temp=0))
     
