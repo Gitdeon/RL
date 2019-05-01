@@ -67,6 +67,20 @@ board size, % wins, % losses, draws, stddev wins/losses
 
 
 
+MCS mu parameter experiments (used seed 8):
+mu, % wins, % losses, draws
+0, 38, 62, 0, 
+1, 59, 41, 0, 
+2, 73, 27, 0 
+3, 83, 17, 0
+4, 89, 11, 0 
+5, 92, 18, 0
+6, 94, 6, 0
+7, 91, 9, 0
+8, 88, 12, 0
+9, 86, 14, 0
+10, 83, 17, 0
+
 
 MCTS uct exploration parameter c experiments:
 c, % wins, % losses, draws, stddev wins/losses
@@ -76,7 +90,19 @@ c, % wins, % losses, draws, stddev wins/losses
 
 
 
-
+Qlearning mu parameter experiments (used seed 8):
+mu, % wins, % losses, draws
+0, 46, 52, 0, 
+1, 71, 29, 0
+2, 83, 17, 0
+3, 90, 10, 0
+4, 91, 9, 0
+5, 93, 7, 0
+6, 91.8, 8.2, 0, 3.31
+7, 91, 9, 0
+8, 95, 5, 0
+9, 93, 7, 0
+10, 88, 12, 0
 
 
 
